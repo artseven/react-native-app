@@ -9,40 +9,31 @@ import {
   FlatList
 } from "react-native";
 
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/GoalInput";
+
 export default function App() {
-  const [enteredGoal, setEnteredGoal] = useState("");
+  // const [enteredGoal, setEnteredGoal] = useState("");
   const [courseGoals, setCourseGoals] = useState([]);
 
-  const goalInputHandler = enteredText => {
-    setEnteredGoal(enteredText);
-  };
-
-  const addGoalHandler = () => {
+  const addGoalHandler = goalTitle => {
     //taking existing array, pulling all the values and putting into new array
     //while adding another element as a second argument
     //setCourseGoals([...courseGoals, enteredGoal]);
-    //updated to make sure react gives latest snapshot of the state to work with
-    setCourseGoals(currentGoals => [...currentGoals, enteredGoal]);
+    //upd: making sure react gives latest snapshot of the state to work with
+    //upd: restructuring to conform with FlatList input array requirements
+    setCourseGoals(currentGoals => [
+      ...currentGoals,
+      { key: Math.random().toString(), value: goalTitle }
+    ]);
   };
 
   return (
     <View style={styles.screen}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Course Goal"
-          style={styles.input}
-          onChangeText={goalInputHandler}
-          value={enteredGoal}
-        />
-        <Button title="ADD" onPress={addGoalHandler} />
-      </View>
+      <GoalInput onAddGoal={addGoalHandler} />
       <FlatList
         data={courseGoals}
-        renderItem={itemData => (
-          <View style={styles.listItem}>
-            <Text>{itemData.item}</Text>
-          </View>
-        )}
+        renderItem={itemData => <GoalItem title={itemData.item.value} />}
       />
     </View>
   );
@@ -51,23 +42,5 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     padding: 50
-  },
-  inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  input: {
-    width: "75%",
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-    padding: 10
-  },
-  listItem: {
-    padding: 10,
-    marginTop: 10,
-    backgroundColor: "#ccc",
-    borderColor: "black",
-    borderWidth: 1
   }
 });
